@@ -49,8 +49,8 @@ int main(void)
         switch (choice) {
         case 1: addDrone(ids, models, batteries, positions, &count); break;
         case 2: displayDrones(ids, models, batteries, positions, count); break;
-        case 3: /* TODO: search by ID */ break;
-        case 4: /* TODO: average battery */ break;
+        case 3: break;
+        case 4: break;
         case 5: break;
         default: printf("Invalid choice.\n");
         }
@@ -59,32 +59,27 @@ int main(void)
     return 0;
 }
 
-/* TODO: Problem 1 */
 void addDrone(int ids[], char models[][MAX_LEN], float batteries[],
               float positions[][2], int *count)
 {
 }
 
-/* TODO: Problem 1 */
 void displayDrones(const int ids[], const char models[][MAX_LEN],
                    const float batteries[], const float positions[][2],
                    int count)
 {
 }
 
-/* TODO: return index of targetID, or -1 */
 int searchDroneByID(const int ids[], int count, int targetID)
 {
     return -1;
 }
 
-/* TODO: store average in *average, return 1; return 0 if no drones */
 int calculateAverageBattery(const float batteries[], int count, float *average)
 {
     return 0;
 }
 
-/* TODO (2C): warn if battery < 20 */
 void checkBatteryWarning(int id, float battery)
 {
 }
