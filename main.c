@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #define MAX_DRONES 5        /* Variation 1B: fleet limited to 5 drones */
-#define MAX_LEN 40          /* max model name length, including '\0' */
+#define MAX_LEN 40
 #define MIN_BATTERY 0.0f
 #define MAX_BATTERY 100.0f
 #define EXIT_CHOICE 5
@@ -47,14 +47,14 @@ int main(void)
         printf("Enter your choice: ");
 
         result = scanf("%d", &choice);
-        if (result == EOF) {            /* input closed: exit cleanly */
+        if (result == EOF) {
             printf("\nEnd of input. Exiting.\n");
             break;
         }
         if (result != 1) {
-            choice = 0;                 /* forces the default case */
+            choice = 0;
         }
-        clear_input();             /* drop the rest of the line */
+        clear_input();
 
         switch (choice) {
         case 1: addDrone(ids, models, batteries, positions, &count); break;
@@ -69,11 +69,7 @@ int main(void)
     return 0;
 }
 
-/*
- * clear_input: discards every character left on the current input
- * line (up to and including '\n'). Also stops at EOF so it can never
- * loop forever.
- */
+/* Discards the rest of the current input line. */
 void clear_input(void)
 {
     int c;
@@ -82,14 +78,8 @@ void clear_input(void)
 }
 
 /*
- * addDrone: prompts for and validates a new drone's ID, model, battery
- * level and position, then stores it at index *count.
- *   ids, models, batteries, positions - fleet arrays (modified on success)
- *   count - POINTER to the caller's drone count. Read with *count to find
- *           the next free slot; incremented through the pointer only when
- *           the drone is successfully added.
- * All input is read into local variables first, so a failed add never
- * changes the arrays or the count.
+ * Prompts for a new drone, validates it, and stores it in the fleet arrays.
+ * count: pointer to the caller's drone count; incremented only on success.
  */
 void addDrone(int ids[], char models[][MAX_LEN], float batteries[],
               float positions[][2], int *count)
@@ -103,13 +93,12 @@ void addDrone(int ids[], char models[][MAX_LEN], float batteries[],
     int   len = 0;
     int   tooLong = 0;
 
-    /* Variation 1B: refuse to add when every slot is used */
+    /* Variation 1B */
     if (*count >= MAX_DRONES) {
         printf("Fleet is full. Cannot add more drones.\n");
         return;
     }
 
-    /* ID: positive integer, not already in the fleet */
     printf("Enter drone ID (positive integer): ");
     if (scanf("%d", &id) != 1) {
         printf("Invalid input: ID must be an integer. Drone not added.\n");
@@ -128,10 +117,7 @@ void addDrone(int ids[], char models[][MAX_LEN], float batteries[],
         }
     }
 
-    /* Model: nonempty, at most MAX_LEN - 1 characters */
     printf("Enter model name (max %d characters): ", MAX_LEN - 1);
-    /* Read the line one character at a time; keep at most MAX_LEN - 1
-       characters so there is always room for the '\0' terminator. */
     while ((ch = getchar()) != '\n' && ch != EOF) {
         if (len < MAX_LEN - 1) {
             model[len] = ch;
@@ -151,7 +137,6 @@ void addDrone(int ids[], char models[][MAX_LEN], float batteries[],
         return;
     }
 
-    /* Battery: 0.0 to 100.0 */
     printf("Enter battery level (%.1f - %.1f): ", MIN_BATTERY, MAX_BATTERY);
     if (scanf("%f", &battery) != 1) {
         printf("Invalid input: battery must be a number. Drone not added.\n");
@@ -165,7 +150,6 @@ void addDrone(int ids[], char models[][MAX_LEN], float batteries[],
         return;
     }
 
-    /* Position: two floats */
     printf("Enter position X and Y (e.g. 10.5 -3): ");
     if (scanf("%f %f", &x, &y) != 2) {
         printf("Invalid input: position must be two numbers. Drone not added.\n");
@@ -174,9 +158,8 @@ void addDrone(int ids[], char models[][MAX_LEN], float batteries[],
     }
     clear_input();
 
-    /* All input valid: store in the next free slot, then update count */
     ids[*count] = id;
-    for (i = 0; i <= len; i++) {         /* copy name including '\0' */
+    for (i = 0; i <= len; i++) {
         models[*count][i] = model[i];
     }
     batteries[*count] = battery;
@@ -185,15 +168,10 @@ void addDrone(int ids[], char models[][MAX_LEN], float batteries[],
     (*count)++;
 
     printf("Drone %d (%s) added successfully.\n", id, model);
-    printf("Fleet slots occupied: %d/%d\n", *count, MAX_DRONES);  /* 1B */
+    printf("Fleet slots occupied: %d/%d\n", *count, MAX_DRONES);
 }
 
-/*
- * displayDrones: prints every stored drone in an aligned table, followed
- * by the total. Prints "No drones available." if the fleet is empty.
- *   ids, models, batteries, positions - fleet arrays (const: read only)
- *   count - number of drones currently stored
- */
+/* Prints all stored drones in a table (read only), or a message if empty. */
 void displayDrones(const int ids[], const char models[][MAX_LEN],
                    const float batteries[], const float positions[][2],
                    int count)
